@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Archie Clicker ⚽</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --green:#39ff88;
+  --lime:#b6ff57;
+  --bg:#07100e;
+  --panel:#101d19;
+  --muted:#8ca49a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:white;
+  font-family:Inter,Arial,sans-serif;min-height:100vh;
+  background-image:radial-gradient(ellipse at 50% 0%,#173d2b 0%,transparent 55%);
+}
+button{font:inherit;cursor:pointer;color:inherit}
+.topbar{
+  padding:18px 5%;display:flex;justify-content:space-between;
+  align-items:center;border-bottom:1px solid #ffffff13;
+  background:#07100edb;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)
+}
+.logo{font-family:Orbitron,sans-serif;font-weight:900;letter-spacing:1px}
+.logo span{color:var(--green)}
+.pill{border:1px solid #ffffff1e;background:#15251e;border-radius:30px;padding:9px 13px;font-size:12px;color:var(--green)}
+.wrap{max-width:1100px;margin:auto;padding:24px 18px 50px}
+.hero{text-align:center;margin:22px 0}
+.eyebrow{color:var(--green);font-size:11px;letter-spacing:4px;font-weight:800}
+h1{font:900 clamp(32px,7vw,62px) Orbitron,sans-serif;margin:12px 0 8px;letter-spacing:-2px}
+h1 em{font-style:normal;color:var(--green);text-shadow:0 0 35px #39ff8850}
+.sub{color:var(--muted);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:25px 0}
+.stat,.panel{background:linear-gradient(145deg,#14241d,#0d1714);border:1px solid #ffffff12;border-radius:16px}
+.stat{padding:15px;text-align:center}
+.stat small{color:var(--muted);font-size:10px;letter-spacing:1px;font-weight:800}
+.stat strong{display:block;font:700 clamp(18px,4vw,27px) Orbitron,sans-serif;margin-top:8px}
+.green{color:var(--green)}
+.game-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+.panel{padding:19px;overflow:hidden}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.panel-head h2{font-size:14px;margin:0;letter-spacing:1px}
+.tag{font-size:10px;color:var(--green);background:#39ff8817;padding:6px 9px;border-radius:20px}
+.stadium{
+  position:relative;border-radius:13px;overflow:hidden;
+  background:linear-gradient(#0a2018,#143d26);
+  padding:25px 12px 15px;min-height:300px;
+}
+.lights{display:flex;justify-content:space-between;margin:0 7px 13px}
+.lights span{width:55px;height:8px;background:#d7ffe8;border-radius:50%;box-shadow:0 0 13px #fff,0 0 40px #4aff9a}
+.pitch{
+  position:relative;height:220px;border:2px solid #b5ffd34d;
+  border-radius:4px;overflow:hidden;
+  background:repeating-linear-gradient(90deg,#176c3d 0px,#176c3d 45px,#1c7945 45px,#1c7945 90px);
+  box-shadow:0 0 50px #39ff8810;
+}
+.pitch:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px solid #d4ffe85c}
+.circle{position:absolute;width:92px;height:92px;border:2px solid #d4ffe85c;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.boxarea{position:absolute;top:25%;bottom:25%;width:22%;border:2px solid #d4ffe85c}
+.boxarea.left{left:-2px}.boxarea.right{right:-2px}
+.goal{
+  position:absolute;left:50%;top:9px;transform:translateX(-50%);
+  font-size:10px;letter-spacing:3px;color:#d9ffe5
+}
+.ball-area{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.ball{
+  border:0;background:transparent;font-size:94px;line-height:1;
+  filter:drop-shadow(0 12px 7px #00180b9c);
+  transition:transform .09s;user-select:none;touch-action:manipulation;
+  animation:float 2.8s ease-in-out infinite;
+}
+.ball:active{transform:scale(.83) rotate(-20deg)}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -8px}}
+.ball-hint{position:absolute;bottom:8px;text-align:center;width:100%;font-size:10px;color:#e0ffe8b0;pointer-events:none;letter-spacing:2px}
+#floaters{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.floater{position:absolute;color:#caff8b;font-weight:900;font-size:20px;animation:rise .8s forwards;text-shadow:0 0 10px #39ff88}
+@keyframes rise{to{transform:translateY(-100px) scale(1.3);opacity:0}}
+.pitch-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--muted);font-size:11px}
+button:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.boost{background:linear-gradient(100deg,var(--green),var(--lime));color:#07120b;border:0;border-radius:10px;padding:11px 14px;font-weight:900;font-size:11px}
+.section-title{font-size:12px;color:var(--muted);letter-spacing:2px;font-weight:800;margin:24px 0 12px}
+.upgrades{display:grid;gap:9px}
+.upgrade{
+  width:100%;display:flex;align-items:center;gap:12px;text-align:left;
+  border:1px solid #ffffff12;border-radius:12px;background:#ffffff05;
+  padding:12px;transition:.15s
+}
+.upgrade:hover{border-color:#39ff8866;background:#39ff8809}
+.upgrade:disabled{opacity:.42;cursor:not-allowed}
+.up-icon{font-size:27px;background:#ffffff09;border-radius:10px;padding:8px}
+.up-info{flex:1;min-width:0}
+.up-name{font-size:12px;font-weight:800}
+.up-desc{font-size:10px;color:var(--muted);margin-top:5px}
+.up-cost{text-align:right;font-size:11px;font-weight:900;color:var(--lime)}
+.up-cost small{display:block;color:var(--muted);font-weight:600;margin-top:5px}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:16px}
+.mission{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #ffffff10}
+.mission:last-child{border:0}
+.mission b{font-size:12px}
+.mission small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.progress{height:4px;background:#ffffff15;border-radius:10px;margin-top:9px;overflow:hidden}
+.progress div{height:100%;background:var(--green);width:0%;transition:width .2s}
+.claim{background:#213e2c;border:1px solid #39ff8844;border-radius:8px;padding:8px;font-size:10px;font-weight:800;color:var(--green)}
+.claim:disabled{opacity:.35}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#193e2a;border:1px solid #39ff88;color:white;padding:12px 18px;border-radius:12px;font-size:12px;z-index:10;opacity:0;pointer-events:none;transition:.2s}
+.toast.show{opacity:1}
+footer{text-align:center;color:#597067;font-size:10px;margin-top:30px;letter-spacing:1px}
+@media(max-width:700px){
+ .game-grid{grid-template-columns:1fr}
+ .bottom-grid{grid-template-columns:1fr}
+ .stats{gap:7px}.stat{padding:12px 5px}
+ .stadium{min-height:285px}.pitch{height:205px}
+ .panel{padding:14px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">ARCHIE<span> FC</span></div>
+  <div class="pill">⚽ CAREER MODE</div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">YOUR CLUB. YOUR LEGACY.</div>
+    <h1>ARCHIE <em>CLICKER</em></h1>
+    <div class="sub">From Sunday league to football legend.</div>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><small>TRANSFER BUDGET</small><strong class="green" id="coins">0</strong></div>
+    <div class="stat"><small>CAREER GOALS</small><strong id="goals">0</strong></div>
+    <div class="stat"><small>CLUB LEVEL</small><strong id="level">1</strong></div>
+  </section>
+
+  <div class="game-grid">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>🏟️ THE STADIUM</h2><span class="tag" id="rank">AMATEUR</span>
+      </div>
+      <div class="stadium">
+        <div class="lights"><span></span><span></span></div>
+        <div class="pitch" id="pitch">
+          <div class="boxarea left"></div><div class="boxarea right"></div>
+          <div class="circle"></div><div class="goal">ARCHIE FC</div>
+          <div id="floaters"></div>
+          <div class="ball-area">
+            <button class="ball" id="ball" aria-label="Kick football for coins">⚽</button>
+          </div>
+          <div class="ball-hint">TAP TO SHOOT</div>
+        </div>
+        <div class="pitch-foot">
+          <span>⚡ <span id="power">1</span> coins / kick</span>
+          <button class="boost" id="upgradeBtn">IMPROVE SHOT ↗</button>
+        </div>
+      </div>
+
+      <div class="section-title">TRANSFER MARKET</div>
+      <div class="upgrades" id="upgrades"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>📋 CLUB DASHBOARD</h2><span class="tag">LIVE</span></div>
+      <div style="background:#ffffff06;border-radius:12px;padding:15px">
+        <div style="font-size:10px;color:var(--muted);letter-spacing:2px">PASSIVE INCOME</div>
+        <div style="font:700 27px Orbitron;margin:8px 0"><span id="income">0</span><span style="font-size:11px;color:var(--green)"> / SEC</span></div>
+        <div style="height:1px;background:#ffffff12;margin:15px 0"></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--muted)">Total kicks</span><b id="kicks">0</b></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:12px"><span style="color:var(--muted)">Best streak</span><b id="streak">0</b></div>
+      </div>
+      <div class="section-title">SQUAD UPGRADES</div>
+      <div class="upgrades" id="squad"></div>
+      <div class="section-title">DAILY TRAINING</div>
+      <div id="missions"></div>
+    </section>
+  </div>
+
+  <div class="bottom-grid">
+    <section class="panel">
+      <div class="panel-head"><h2>🏆 CLUB HONOURS</h2></div>
+      <div id="honours" style="font-size:12px;color:var(--muted);line-height:2">Score your first goal to begin your career.</div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>⚙️ SAVE & SETTINGS</h2></div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.8">Your career saves automatically on this device.</div>
+      <button class="upgrade" style="margin-top:12px;width:100%;justify-content:center" id="saveBtn">💾 SAVE CAREER NOW</button>
+      <button class="upgrade" style="margin-top:8px;width:100%;justify-content:center" id="resetBtn">↻ RESET CAREER</button>
+    </section>
+  </div>
+  <footer>ARCHIE FC © 2026 · BUILT FOR THE BEAUTIFUL GAME</footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const definitions = [
+ {id:'boots',name:'Elite Boots',icon:'👟',desc:'Sharper finishing · +1 coin per kick',base:25,type:'power',amount:1},
+ {id:'fans',name:'Fan Club',icon:'📣',desc:'Fans bring in coins every second',base:60,type:'income',amount:1},
+ {id:'coach',name:'Pro Coach',icon:'🧠',desc:'Double your shooting power',base:150,type:'mult',amount:2},
+ {id:'academy',name:'Youth Academy',icon:'🎓',desc:'Train future stars for passive income',base:300,type:'income',amount:5},
+ {id:'scout',name:'Elite Scout',icon:'🔎',desc:'Find world-class talent',base:750,type:'income',amount:12},
+ {id:'stadium',name:'Bigger Stadium',icon:'🏟️',desc:'More fans, more matchday income',base:1800,type:'income',amount:35},
+ {id:'striker',name:'Star Striker',icon:'🥇',desc:'A clinical finisher · +25 per kick',base:4000,type:'power',amount:25},
+ {id:'legend',name:'Football Legend',icon:'👑',desc:'Massive passive income',base:12000,type:'income',amount:120}
+];
+const missionsData = [
+ {id:'kicks',title:'Training Session',desc:'Take 25 shots',goal:25,reward:100},
+ {id:'goals',title:'Matchday Finisher',desc:'Score 10 goals',goal:10,reward:180},
+ {id:'coins',title:'Transfer Budget',desc:'Earn 500 coins in total',goal:500,reward:250}
+];
+let data;
+function fresh(){return {coins:0,goals:0,kicks:0,streak:0,best:0,totalEarned:0,levels:{},claimed:[],lastSave:Date.now()}}
+try{data=JSON.parse(localStorage.getItem('archieFC'))||fresh()}catch{data=fresh()}
+function count(id){return data.levels[id]||0}
+function cost(u){return Math.floor(u.base*Math.pow(1.65,count(u.id)))}
+function power(){return Math.floor((1+count('boots')+25*count('striker'))*Math.pow(2,count('coach')))}
+function income(){return definitions.filter(u=>u.type==='income').reduce((s,u)=>s+count(u.id)*u.amount,0)}
+function fmt(n){if(n<1000)return Math.floor(n).toLocaleString('en-GB');const units=['K','M','B','T'];let i=-1;while(n>=1000&&i<units.length-1){n/=1000;i++}return n.toFixed(n>=100?0:n>=10?1:2)+units[i]}
+function save(){data.lastSave=Date.now();try{localStorage.setItem('archieFC',JSON.stringify(data))}catch{}}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}
+function earn(n){data.coins+=n;data.totalEarned+=n;checkMissions();render()}
+function shoot(){
+ const p=power();earn(p);data.kicks++;data.goals++;data.streak++;
+ data.best=Math.max(data.best,data.streak);
+ const f=document.createElement('div');f.className='floater';f.textContent='+'+fmt(p);
+ f.style.left=(25+Math.random()*50)+'%';f.style.top=(35+Math.random()*30)+'%';$('floaters').appendChild(f);
+ setTimeout(()=>f.remove(),850);
+ $('ball').style.transform='rotate('+((Math.random()*50)-25)+'deg) scale(.94)';
+ setTimeout(()=>$('ball').style.transform='',100);
+ checkMissions();render();save();
+}
+function buy(id){
+ const u=definitions.find(x=>x.id===id),c=cost(u);
+ if(data.coins<c)return toast('Not enough coins yet!');
+ data.coins-=c;data.levels[id]=(data.levels[id]||0)+1;
+ toast(u.name+' upgraded!');render();save();
+}
+function upgradeCard(u){
+ const c=cost(u),owned=count(u.id);
+ return `<button class="upgrade" onclick="buy('${u.id}')" ${data.coins<c?'disabled':''}>
+ <span class="up-icon">${u.icon}</span><span class="up-info"><span class="up-name">${u.name} <span style="color:var(--green)">Lv.${owned}</span></span><span class="up-desc">${u.desc}</span></span>
+ <span class="up-cost">${fmt(c)}<small>COINS</small></span></button>`;
+}
+function checkMissions(){}
+function missionProgress(m){
+ if(m.id==='kicks')return data.kicks;
+ if(m.id==='goals')return data.goals;
+ return data.totalEarned;
+}
+function claim(i){
+ const m=missionsData[i];
+ if(data.claimed.includes(m.id)||missionProgress(m)<m.goal)return;
+ data.claimed.push(m.id);data.coins+=m.reward;toast('Training reward claimed! +'+m.reward);render();save();
+}
+function render(){
+ $('coins').textContent=fmt(data.coins);$('goals').textContent=fmt(data.goals);
+ $('level').textContent=1+definitions.reduce((s,u)=>s+count(u.id),0);
+ $('power').textContent=fmt(power());$('income').textContent=fmt(income());
+ $('kicks').textContent=fmt(data.kicks);$('streak').textContent=fmt(data.best);
+ const ranks=[['AMATEUR',0],['SUNDAY LEAGUE',100],['SEMI-PRO',1000],['PRO',10000],['PREMIER LEAGUE',100000],['WORLD CLASS',1000000]];
+ $('rank').textContent=ranks.filter(r=>data.totalEarned>=r[1]).pop()[0];
+ $('upgrades').innerHTML=definitions.slice(0,4).map(upgradeCard).join('');
+ $('squad').innerHTML=definitions.slice(4).map(upgradeCard).join('');
+ $('missions').innerHTML=missionsData.map((m,i)=>{
+ const p=missionProgress(m),done=p>=m.goal,claimed=data.claimed.includes(m.id);
+ return `<div class="mission"><div style="flex:1"><b>${m.title}</b><small>${m.desc} · ${Math.min(p,m.goal).toLocaleString()}/${m.goal.toLocaleString()}</small><div class="progress"><div style="width:${Math.min(100,p/m.goal*100)}%"></div></div></div><button class="claim" onclick="claim(${i})" ${!done||claimed?'disabled':''}>${claimed?'CLAIMED':'+'+m.reward}</button></div>`;
+ }).join('');
+ const honours=[];
+ if(data.goals>=1)honours.push('⚽ First goal scored');
+ if(data.kicks>=25)honours.push('🎯 Training ground regular');
+ if(data.totalEarned>=1000)honours.push('💷 Rising club');
+ if(data.totalEarned>=10000)honours.push('🏆 Football superstar');
+ if(data.totalEarned>=100000)honours.push('👑 Living legend');
+ $('honours').innerHTML=honours.length?honours.join('<br>'):'Score your first goal to begin your career.';
+ $('upgradeBtn').textContent='IMPROVE SHOT · '+fmt(Math.floor(25*Math.pow(1.65,count('boots'))))+' COINS';
+}
+$('ball').addEventListener('click',shoot);
+$('upgradeBtn').addEventListener('click',()=>buy('boots'));
+$('saveBtn').addEventListener('click',()=>{save();toast('Career saved!')});
+$('resetBtn').addEventListener('click',()=>{
+ if(confirm('Reset your entire Archie FC career? This cannot be undone.')){
+ data=fresh();save();render();toast('New career started');
+ }
+});
+setInterval(()=>{const inc=income();if(inc>0){data.coins+=inc;data.totalEarned+=inc;checkMissions();render()}},1000);
+render();
+</script>
+</body>
+</html>
